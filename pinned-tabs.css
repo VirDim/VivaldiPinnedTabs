@@ -1,0 +1,163 @@
+/*
+ * Vivaldi 8.2.4133.68
+ * Vertical pinned tabs mod
+ *
+ * CSS does only three things:
+ * 1) keeps pinned tabs fixed;
+ * 2) keeps the separator fixed;
+ * 3) hides the native scrollbar visually without changing its geometry.
+ *
+ * The small auto-hiding scrollbar is drawn by pinned-tabs.js.
+ */
+
+/* --- Pinned tabs --- */
+
+#tabs-container:is(.left, .right)
+.tab-strip.overflow > span > .tab-position.is-pinned {
+    position: sticky !important;
+
+    top: var(--PositionY) !important;
+    left: 0 !important;
+    right: auto !important;
+    transform: none !important;
+
+    width: var(--Width) !important;
+    min-width: var(--Width) !important;
+    max-width: var(--Width) !important;
+    height: var(--Height) !important;
+
+    box-sizing: border-box !important;
+
+    /* position:sticky participates in normal flow.
+       Cancel that extra height so Vivaldi's virtual layout is preserved. */
+    margin-bottom: calc(-1 * var(--Height)) !important;
+
+    /* Only one layer above normal tabs. Keep Vivaldi popups/resizers above us. */
+    z-index: 2 !important;
+
+    background: var(--colorBg) !important;
+    overflow: hidden !important;
+}
+
+#tabs-container:is(.left, .right)
+.tab-strip.overflow > span > .tab-position.is-pinned > .tab {
+    width: 100% !important;
+    max-width: 100% !important;
+    min-width: 0 !important;
+
+    box-sizing: border-box !important;
+    overflow: hidden !important;
+}
+
+#tabs-container:is(.left, .right)
+.tab-position.is-pinned .title {
+    min-width: 0 !important;
+    overflow: hidden !important;
+    text-overflow: ellipsis !important;
+    white-space: nowrap !important;
+}
+
+#tabs-container:is(.left, .right)
+.tab-position.is-pinned .tab-header {
+    min-width: 0 !important;
+    max-width: 100% !important;
+}
+
+
+/* --- Separator between pinned and normal tabs --- */
+
+#tabs-container:is(.left, .right)
+.tab-strip.overflow > .separator {
+    position: sticky !important;
+
+    top: var(--PositionY) !important;
+    left: 0 !important;
+    right: auto !important;
+    transform: none !important;
+
+    width: var(--Width) !important;
+    min-width: var(--Width) !important;
+    max-width: var(--Width) !important;
+    height: var(--Height) !important;
+
+    box-sizing: border-box !important;
+    margin-bottom: calc(-1 * var(--Height)) !important;
+
+    z-index: 2 !important;
+    background: var(--colorBg) !important;
+}
+
+
+/* --- Keep Vivaldi's native scrollbar geometry, but make it invisible.
+       IMPORTANT: do NOT set scrollbar width to 0 and do NOT set width/overflow
+       on .tab-strip. Vivaldi uses the native scrollbar width in its layout. --- */
+
+#tabs-container:is(.left, .right) .tab-strip.overflow {
+    scrollbar-color: transparent transparent !important;
+}
+
+#tabs-container:is(.left, .right)
+.tab-strip.overflow::-webkit-scrollbar-track,
+#tabs-container:is(.left, .right)
+.tab-strip.overflow::-webkit-scrollbar-thumb,
+#tabs-container:is(.left, .right)
+.tab-strip.overflow::-webkit-scrollbar-corner {
+    background: transparent !important;
+    border-color: transparent !important;
+    box-shadow: none !important;
+}
+
+
+/* --- Custom visual scrollbar drawn by pinned-tabs.js --- */
+
+#oc-vtab-scrollbar {
+    position: absolute;
+    width: 7px;
+
+    pointer-events: none;
+    opacity: 0;
+
+    z-index: 8;
+
+    transition: opacity 140ms ease;
+
+    contain: layout paint;
+}
+
+#oc-vtab-scrollbar.oc-visible {
+    opacity: 1;
+}
+
+#oc-vtab-scrollbar-thumb {
+    position: absolute;
+    top: 0;
+    right: 1px;
+
+    width: 4px;
+    min-height: 28px;
+
+    border-radius: 999px;
+
+    background: color-mix(
+        in srgb,
+        var(--colorFg) 45%,
+        transparent
+    );
+
+    transform: translateY(0);
+    will-change: transform, height;
+}
+
+
+/* Right-side vertical tabs */
+#tabs-tabbar-container.right #oc-vtab-scrollbar-thumb {
+    right: auto;
+    left: 1px;
+}
+
+
+/* Do not let sticky tabs steal the resize layer. */
+#tabs-tabbar-container .SlideBar {
+    z-index: 20 !important;
+    pointer-events: auto !important;
+}
